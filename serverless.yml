@@ -1,0 +1,103 @@
+service: dio-aws-crud-Items
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  iam:
+      role:
+          statements:
+            - Effect: Allow
+              Action:
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+                - dynamodb:GetItem
+                - dynamodb:Scan
+                - dynamodb:DeleteItem
+              Resource:
+                - arn:aws:dynamodb:us-east-1:192482787607:table/Items
+
+functions:
+  api:
+    handler: index.handler
+    events:
+      - httpApi:
+          path: /
+          method: get
+
+  putItem:
+    handler: src/put_item_function.handler
+    events:
+      - http:
+          path: item
+          method: post
+          cors: true
+
+  getItem:
+    handler: src/get_item_function.handler
+    events:
+      - http:
+          path: item/{id}
+          method: get
+          cors: true
+
+  updItem:
+    handler: src/updateCliente.handler
+    events:
+      - http:
+          path: item/{id}
+          method: put
+          cors: true
+
+  delItem:
+    handler: src/del_item_function.handler
+    events:
+      - http:
+          path: item/{id}
+          method: delete
+          cors: true
+
+resources:
+  Resources:
+    ClienteTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Items
+        AttributeDefinitions:
+         - AttributeName: id
+           AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH        
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+
+    TestPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: TestPool
+        AutoVerifiedAttributes:
+          - email
+        UsernameAttributes:
+          - email
+          - phone_number
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 8
+            RequireUppercase: true
+            RequireLowercase: true
+            RequireNumbers: true
+            RequireSymbols: true
+            TemporaryPasswordValidityDays: 7
+        MfaConfiguration: OFF
+
+    TestClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: TestClient
+        UserPoolId:
+          Ref: TestPool
+        GenerateSecret: false
+        ExplicitAuthFlows:
+          - USER_PASSWORD_AUTH

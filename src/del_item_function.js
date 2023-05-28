@@ -6,29 +6,30 @@ module.exports.handler = async (event) => {
     const { id } = event.pathParameters;
 
     const params = {
-      TableName: 'clientes',
+      TableName: 'Items',
       Key: {
         id
-      }
+      },
+      ReturnValues: 'ALL_OLD'
     };
 
-    const result = await dynamodb.get(params).promise();
+    const result = await dynamodb.delete(params).promise();
 
-    if (!result.Item) {
+    if (!result.Attributes) {
       return {
         statusCode: 404,
-        body: JSON.stringify({ message: 'Cliente não encontrado' })
+        body: JSON.stringify({ message: 'Item não encontrado' })
       };
     }
 
     return {
       statusCode: 200,
-      body: JSON.stringify(result.Item)
+      body: JSON.stringify({ message: 'Item deletado com sucesso' })
     };
   } catch (error) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: 'Erro ao obter cliente', error })
+      body: JSON.stringify({ message: 'Erro ao deletar Item', error })
     };
   }
 };

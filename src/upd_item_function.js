@@ -4,18 +4,16 @@ const dynamodb = new AWS.DynamoDB.DocumentClient();
 module.exports.handler = async (event) => {
   try {
     const { id } = event.pathParameters;
-    const { nome, email, telefone } = JSON.parse(event.body);
+    const { price } = JSON.parse(event.body);
 
     const params = {
-      TableName: 'clientes',
+      TableName: 'Items',
       Key: {
         id
       },
-      UpdateExpression: 'set nome = :nome, email = :email, telefone = :telefone',
+      UpdateExpression: 'set price = :price',
       ExpressionAttributeValues: {
-        ':nome': nome,
-        ':email': email,
-        ':telefone': telefone
+        ':price': price
       },
       ReturnValues: 'ALL_NEW'
     };
@@ -29,7 +27,7 @@ module.exports.handler = async (event) => {
   } catch (error) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: 'Erro ao atualizar cliente', error })
+      body: JSON.stringify({ message: 'Erro ao atualizar Item', error })
     };
   }
 };

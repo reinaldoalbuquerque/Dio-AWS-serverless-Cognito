@@ -3,15 +3,13 @@ const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 module.exports.handler = async (event) => {
   try {
-    const { id, nome, email, telefone } = JSON.parse(event.body);
+    const { id, price } = JSON.parse(event.body);
 
     const params = {
-      TableName: 'clientes',
+      TableName: 'Items',
       Item: {
         id,
-        nome,
-        email,
-        telefone
+        price
       }
     };
 
@@ -19,12 +17,12 @@ module.exports.handler = async (event) => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: 'Cliente criado com sucesso' })
+      body: JSON.stringify({ message: 'Items adicionado com sucesso' })
     };
   } catch (error) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: 'Erro ao criar cliente', error })
+      body: JSON.stringify({ message: 'Erro ao criar Items', error })
     };
   }
 };
