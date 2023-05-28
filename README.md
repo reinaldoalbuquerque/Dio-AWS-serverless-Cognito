@@ -26,5 +26,5 @@ functions:
 
 _Note_: In current form, after deployment, your API is public and can be invoked by anyone. For production deployments, you might want to configure an authorizer. For details on how to do that, refer to [http event docs](https://www.serverless.com/framework/docs/providers/aws/events/apigateway/).
 
-
-Postman export Items.postman_collection.json
+### Postman Export
+Importar o "Items.postman_collection.json" no postman para validar a API
